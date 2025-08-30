@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Network Sniffer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Floating stop button animation */
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white flex flex-col">
+
+  <!-- Header -->
+  <header class="p-6 text-center">
+    <h1 class="text-4xl font-bold drop-shadow-lg animate-bounce">🔍 Basic Network Sniffer</h1>
+    <p class="text-lg mt-2 opacity-90">Capture, analyze, and explore packets in real-time</p>
+  </header>
+
+  <!-- Buttons -->
+  <div class="flex justify-center gap-4 my-4">
+    <button id="startBtn" class="px-6 py-2 bg-green-500 hover:bg-green-600 rounded-2xl shadow-lg transition transform hover:scale-105">
+      ▶ Start Capture
+    </button>
+    <button id="clearBtn" class="px-6 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-2xl shadow-lg transition transform hover:scale-105">
+      🧹 Clear History
+    </button>
+  </div>
+
+  <!-- Packets Table (scrollable) -->
+  <div id="tableWrapper" class="overflow-y-auto h-[60vh] px-6">
+    <table class="min-w-full bg-white text-black rounded-2xl shadow-xl overflow-hidden">
+      <thead class="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+        <tr>
+          <th class="px-4 py-2">#</th>
+          <th class="px-4 py-2">Source IP</th>
+          <th class="px-4 py-2">Destination IP</th>
+          <th class="px-4 py-2">Protocol</th>
+          <th class="px-4 py-2">Payload</th>
+        </tr>
+      </thead>
+      <tbody id="packetTable" class="divide-y divide-gray-200">
+        <!-- Packets will appear here dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Floating Stop Button -->
+  <button id="stopBtn" class="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 px-6 py-3 rounded-full shadow-lg text-lg font-bold pulse">
+    ⏹ Stop
+  </button>
+
+  <script>
+    let counter = 1;
+    let interval = null;
+
+    // Function to add packet to table
+    function addPacket(src, dst, proto, payload) {
+      const table = document.getElementById("packetTable");
+      const row = document.createElement("tr");
+      row.classList.add("hover:bg-gray-100", "transition");
+      row.innerHTML = `
+        <td class="px-4 py-2">${counter++}</td>
+        <td class="px-4 py-2">${src}</td>
+        <td class="px-4 py-2">${dst}</td>
+        <td class="px-4 py-2">${proto}</td>
+        <td class="px-4 py-2 text-xs max-w-xs overflow-x-auto">${payload}</td>
+
+      `;
+      table.appendChild(row);
+
+      // Auto-scroll to bottom
+      const wrapper = document.getElementById("tableWrapper");
+      wrapper.scrollTop = wrapper.scrollHeight;
+    }
+
+    // Start Capture (simulation mode for now)
+    document.getElementById("startBtn").addEventListener("click", () => {
+      let i = 0;
+      interval = setInterval(() => {
+        addPacket("192.168.1." + i, "8.8.8.8", "TCP", "Payload data packet #" + i);
+        i++;
+      }, 1000);
+    });
+
+    // Stop Capture
+    document.getElementById("stopBtn").addEventListener("click", () => {
+      if (interval) clearInterval(interval);
+    });
+
+    // Clear History
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      document.getElementById("packetTable").innerHTML = "";
+      counter = 1;
+    });
+  </script>
+</body>
+</html>
