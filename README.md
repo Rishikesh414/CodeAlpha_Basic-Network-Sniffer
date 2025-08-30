@@ -49,10 +49,10 @@ Get-NetAdapter | Select Name, InterfaceGuid
 List interfaces:
 
 ifconfig
-# or
+ or
 ip addr show
 
-🔹 Scapy (Python)
+ Scapy (Python)
 
 List available interfaces:
 
